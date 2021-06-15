@@ -1,0 +1,13 @@
+filename:  H:/MailMan
+modified file_name:  H:/MailMan
+filename:  //uk.corporg.net/ngdfs/Shared/Cohqfs01/EVERYONE/WK24DATA
+normalised path:  \\uk.corporg.net\ngdfs\Shared\Cohqfs01\EVERYONE\WK24DATA
+modified file_name:  \\uk.corporg.net\ngdfs\Shared\Cohqfs01\EVERYONE\WK24DATA
+Generator Name:  WK24 GEN1
+Company:  NG ESO
+First Name:  Lilian
+Primary Contact Email:  paul.mathew2@nationalgrideso.com
+Location:  England and Wales
+Ref No:  WK24-GEN-20-010
+Contact:  Ms S Tonge
+Secondary Contact Email:  None
