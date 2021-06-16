@@ -1,0 +1,125 @@
+<!doctype html>
+<html>
+<head>
+<title>Text Editor</title>
+<script>
+var oDoc;
+function initiateDocs() {    
+  oDoc = document.getElementById("textBox");
+}
+function formatType(sCmd, sValue) {
+  document.execCommand(sCmd, false, sValue); 
+  
+}
+var loadFile = function(event) {
+  oDoc.focus();
+  formatType("insertImage", URL.createObjectURL(event.target.files[0]));
+};
+
+function getData(){
+        var box_content=document.getElementById("textBox")
+        var subject_content=document.getElementById("subjectBox")
+        var body_contentHTML = box_content.innerHTML
+        var subject_contentHTML = subject_content.innerHTML
+        var blob = new Blob([body_contentHTML],{ type: "text/plain;charset=utf-8" });
+        var sub = new Blob([subject_contentHTML],{ type: "text/plain;charset=utf-8" });
+        saveAs(sub, "Subject.txt");
+        saveAs(blob, "Body.txt");
+      };
+
+</script>
+<script src="fileSaver.js"></script>
+<style type="text/css">
+.intLink { cursor: pointer; }
+img.intLink { border: 0; }
+#toolBar1 select { font-size:15px; }
+#subjectBox {
+  width: 97%;
+  height: 50%;
+  border: 0.5px #000000 solid;
+  padding: 12px;
+  margin-top: 5px;
+}
+#textBox {
+  width: 97%;
+  height: 100%;
+  border: 0.5px #000000 solid;
+  padding: 12px;
+  margin-top: 5px;
+}
+.container {
+  padding: 1em;
+}
+#toolBar1 {
+  margin-bottom: 1em;
+}
+#DoneButton{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  
+}
+</style>
+</head>
+<body onload="initiateDocs();">
+<form name="compForm" method="post" class="container">
+<input type="hidden" name="myDoc">
+
+<div id="toolBar1">
+
+<select onchange="formatType('fontsize',this[this.selectedIndex].value);
+this.selectedIndex=0;">
+<option class="heading" selected>Font Size</option>
+<option value="1">1</option>
+<option value="2">2</option>
+<option value="3">3</option>
+<option value="4">4</option>
+<option value="5">5</option>
+<option value="6">6</option>
+<option value="7">7</option>
+</select>
+
+<select id="input-font" class="input" onchange="formatType('fontName',this[this.selectedIndex].value);">
+    <option value="Font" selected="selected">Font</option>
+    <option value="Times New Roman">Times New Roman</option>
+    <option value="Arial">Arial</option>
+    <option value="fantasy">fantasy</option>
+    <option value="cursive">cursive</option>
+</select>
+
+<!--<label for="favcolor">Font Color:</label>
+<input name="Color Picker" type="color" onchange="formatType('foreColor',this[this.selectedIndex].value);">-->
+
+<select onchange="formatType('foreColor',this[this.selectedIndex].value);">
+  <option value="Font colour" selected="selected">Font Colour</option>
+  <option value="#FFFF00">Yellow</option>
+  <option value="#FF0000">Red</option>
+  <option value="#0000FF">Blue</option>
+  <option value="#FFA500">Orange</option> 
+  <option value="#00FF00">Green</option> 
+</select>
+
+<select onchange="formatType('backColor',this[this.selectedIndex].value);">
+  <option value="Highlight" selected="selected">Background Colour</option>
+  <option value="#FFFF00">Yellow</option>
+  <option value="#FF0000">Red</option>
+  <option value="#0000FF">Blue</option>
+  <option value="#FFA500">Orange</option> 
+  <option value="#00FF00">Green</option> 
+</select>
+
+<img src="bold-text.png" width="13" height="13" onclick="formatType('bold');" />
+<img src="italic.png" width="13" height="13" onclick="formatType('italic');" />
+<img src="underline.png" width="13" height="13" onclick="formatType('underline');" />
+
+</div>
+<h4>Subject:</h2>
+<div id="subjectBox" contenteditable="true" spellcheck="true"></div>
+<h4>Body:</h2>
+<div id="textBox" contenteditable="true" spellcheck="true"></div>
+</form>
+<div id="DoneButton">
+    <button onclick="getData()">Done</button>
+</div>
+</body>
+</html>
