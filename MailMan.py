@@ -3,6 +3,7 @@ from MailManConf import Ui_Conf_Window
 from Body import Ui_BodyWindow
 from send_mail import SendMailThread
 from archive_mail import SaveMailThread
+import webbrowser
 
 class Ui_MainWindow(object):
 
@@ -321,7 +322,8 @@ class Ui_MainWindow(object):
         else:
             pass
 
-    def bodyaction(self):
+    def bodyaction(self):  #open browser inside this func
+        webbrowser.open("bodyGenerator\\index.html",new=1)
         self.body_window = QtWidgets.QMainWindow()
         self.body_ui = Ui_BodyWindow()
         self.body_ui.setupUi(self.body_window)
