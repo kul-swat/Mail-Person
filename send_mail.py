@@ -266,33 +266,43 @@ class SendMailThread(QtCore.QThread):
                 f = open('Body.txt','r')
                 txt = f.read()
                 for cols in list(maildata.keys()):
-                    if cols=='Ref No':
-                        ref_no = str(maildata[cols])
-                        txt = txt.replace('&'+str(cols)+'&',"")
-                    else:
-                        rep = '&'+str(cols)+'&'
-                        val = str(maildata[cols])
-                        txt = txt.replace(rep,val)
-                mail.Body = txt
+                    rep = '&'+str(cols)+'&'
+                    val = str(maildata[cols])
+                    txt = txt.replace(rep,val)
+                    # if cols=='Ref No':
+                    #     ref_no = str(maildata[cols])
+                    #     txt = txt.replace('&'+str(cols)+'&',"")
+                    # else:
+                    #     rep = '&'+str(cols)+'&'
+                    #     val = str(maildata[cols])
+                    #     txt = txt.replace(rep,val)
+                print("Before assigning text to html body")
+                mail.Body = ""
+                mail.HTMLbody = txt
                 f.close()
-                print("Body:", mail.Body)
-                print("Line: 275   Before changing to Arial:", mail.HTMLbody)
-                mail_htmlbody=mail.HTMLbody
-                mail_htmlbody=mail_htmlbody.replace("Calibri","Arial")
-                mail.HTMLbody = mail_htmlbody
-                print("Line: 279   Arial changing to Arial:", mail.HTMLbody)
-                open_sign = open('Signature.txt')
-                sign = open_sign.read()
-                print("\n line:332  Before inserting signature HTML Body\n", mail.HTMLbody)
-                reference_template = f'''<div style = "font-size: 14.75px;">
-                                <FONT FACE="Arial">
-                                    {ref_no} 
-                                </FONT>
-                            </div>'''
-                pre=mail.HTMLbody[:mail.HTMLbody.rfind("</P>")+4]
-                post=mail.HTMLbody[mail.HTMLbody.rfind("</P>")+4:]
-                mail.HTMLbody=pre+sign+reference_template+post
-                print("\n line:337  After inserting signature HTML Body\n", mail.HTMLbody)
+
+                #print("Body:", mail.Body)
+                # print("Line: 275   Before changing to Arial:", mail.HTMLbody)
+                # mail_htmlbody=mail.HTMLbody
+                # mail_htmlbody=mail_htmlbody.replace("Calibri","Arial")
+                # mail.HTMLbody = mail_htmlbody
+                # print("Line: 279   Arial changing to Arial:", mail.HTMLbody)
+                #open_sign = open('Signature.txt')
+                #sign = open_sign.read()
+
+                
+
+                # reference_template = f'''<div style = "font-size: 14.75px;">
+                #                 <FONT FACE="Arial">
+                #                     {ref_no} 
+                #                 </FONT>
+                #             </div>'''
+                # pre=mail.HTMLbody[:mail.HTMLbody.rfind("</P>")+4]
+                # post=mail.HTMLbody[mail.HTMLbody.rfind("</P>")+4:]
+                #mail.HTMLbody=pre+sign+reference_template+post
+                # mail.HTMLbody=pre+reference_template+post
+                # print("\n line:337  After inserting signature HTML Body\n", mail.HTMLbody)
+                print("\n line:332  HTML Body\n", mail.HTMLbody)
                 if self.mergelist.startswith("//"):
                     print("Line:312 shared drive")
                     temp_path=maildata['File Path']
