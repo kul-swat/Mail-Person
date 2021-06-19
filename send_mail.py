@@ -264,9 +264,12 @@ class SendMailThread(QtCore.QThread):
                 mail.Subject = txt
                 f.close()
                 f = open('Body.txt','r')
+                print("line No. 267: ", maildata)
                 txt = f.read()
                 for cols in list(maildata.keys()):
-                    rep = '&'+str(cols)+'&'
+                    print("\n\n\n line No. 270:   ", cols)
+                    rep = '##'+str(cols)+'##'
+                    print("\n line No. 272:   ", rep)
                     val = str(maildata[cols])
                     txt = txt.replace(rep,val)
                     # if cols=='Ref No':
@@ -277,8 +280,10 @@ class SendMailThread(QtCore.QThread):
                     #     val = str(maildata[cols])
                     #     txt = txt.replace(rep,val)
                 print("Before assigning text to html body")
+                print("line No. 281:  ",txt)
                 mail.Body = ""
                 mail.HTMLbody = txt
+                print("Replacing mail.HTMLbody text",mail.HTMLbody)
                 f.close()
 
                 #print("Body:", mail.Body)
@@ -302,7 +307,7 @@ class SendMailThread(QtCore.QThread):
                 #mail.HTMLbody=pre+sign+reference_template+post
                 # mail.HTMLbody=pre+reference_template+post
                 # print("\n line:337  After inserting signature HTML Body\n", mail.HTMLbody)
-                print("\n line:332  HTML Body\n", mail.HTMLbody)
+                print("\n line:310  HTML Body\n", mail.HTMLbody)
                 if self.mergelist.startswith("//"):
                     print("Line:312 shared drive")
                     temp_path=maildata['File Path']
