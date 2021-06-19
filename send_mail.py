@@ -257,7 +257,7 @@ class SendMailThread(QtCore.QThread):
                 txt = f.read()
                 print("Accessing subject file",txt)
                 for cols in list(maildata.keys()):
-                    rep = '&'+str(cols)+'&'
+                    rep = '##'+str(cols)+'##'
                     val = str(maildata[cols])
                     txt = txt.replace(rep,val)
                 print("Replacing subject text",txt)
