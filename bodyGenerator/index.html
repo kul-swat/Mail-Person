@@ -15,18 +15,66 @@ var loadFile = function(event) {
   oDoc.focus();
   formatType("insertImage", URL.createObjectURL(event.target.files[0]));
 };
+function formatText(){
+  var box_content=document.getElementById("textBox")
+  var body_contentHTML = box_content.innerHTML
+  
+  var find = '<o:p></o:p>';
+  var re = new RegExp(find, 'g');
+  body_contentHTML = body_contentHTML.replace(re, '');
 
+  find = '<p';
+  re = new RegExp(find, 'g');
+  body_contentHTML = body_contentHTML.replace(re, "<div");
+
+  find = '</p>';
+  re = new RegExp(find, 'g');
+  body_contentHTML = body_contentHTML.replace(re, "</div>");
+  box_content.innerHTML=body_contentHTML
+};
 function getData(){
-        var box_content=document.getElementById("textBox")
-        var subject_content=document.getElementById("subjectBox")
-        var body_contentHTML = box_content.innerHTML
-        var subject_contentHTML = subject_content.innerHTML
-        var blob = new Blob([body_contentHTML],{ type: "text/plain;charset=utf-8" });
-        var sub = new Blob([subject_contentHTML],{ type: "text/plain;charset=utf-8" });
-        saveAs(sub, "Subject.txt");
-        saveAs(blob, "Body.txt");
-      };
+  var box_content=document.getElementById("textBox")
+  var subject_content=document.getElementById("subjectBox")
+  var body_contentHTML = box_content.innerHTML
+  var subject_contentHTML = subject_content.innerHTML
+  var blob = new Blob([body_contentHTML],{ type: "text/plain;charset=utf-8" });
+  var sub = new Blob([subject_contentHTML],{ type: "text/plain;charset=utf-8" });
+  saveAs(sub, "Subject.txt");
+  saveAs(blob, "Body.txt");
+};
 
+function onKeyPress(){
+  var box_content=document.getElementById("textBox")
+  var body_contentHTML = box_content.innerHTML
+  var re = new RegExp('<div>', 'g');
+  body_contentHTML = body_contentHTML.replace(re, '');
+  re = new RegExp('</div>', 'g');
+  body_contentHTML = body_contentHTML.replace(re, '');
+  re = new RegExp('<br>', 'g');
+  body_contentHTML = body_contentHTML.replace(re, '');
+  console.log("body length: ",body_contentHTML.length)
+  var format_button=document.getElementById("formatButton")
+  var done_button=document.getElementById("doneButton")
+  if (body_contentHTML.length>0){
+    format_button.style.opacity=1
+    format_button.disabled = false;
+  } else {
+    format_button.style.opacity=0.5
+    format_button.disabled = true;
+  }
+  var subject_content=document.getElementById("subjectBox")
+  var subject_contentHTML=subject_content.innerHTML
+  console.log("sub length: ",subject_contentHTML.length)
+  if (subject_contentHTML.length>0 && body_contentHTML.length>0){
+    done_button.style.opacity=1
+    done_button.disabled = false;
+  } else {
+    done_button.style.opacity=0.5
+    done_button.disabled = true;
+  }
+  
+  // console.log(format_button)
+}
 </script>
 <script src="fileSaver.js"></script>
 <style type="text/css">
@@ -34,15 +82,17 @@ function getData(){
 img.intLink { border: 0; }
 #toolBar1 select { font-size:15px; }
 #subjectBox {
-  width: 97%;
-  height: 50%;
+  width: 98%;
+  max-height: 7vh;
+  overflow: auto;
   border: 0.5px #000000 solid;
   padding: 12px;
   margin-top: 5px;
 }
 #textBox {
-  width: 97%;
-  height: 100%;
+  width: 98%;
+  height: 50vh;
+  overflow: auto;
   border: 0.5px #000000 solid;
   padding: 12px;
   margin-top: 5px;
@@ -53,11 +103,74 @@ img.intLink { border: 0; }
 #toolBar1 {
   margin-bottom: 1em;
 }
-#DoneButton{
+/* #DoneButton{
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
   
+} */
+.bottom-buttons{
+  display: flex;
+  justify-content: space-between;
+  padding-left: 1em;
+  padding-right: 1em;
+}
+.button {
+  position: relative;
+    background-color: #727087;
+    opacity: 0.5;
+    border: none;
+    border-radius: 3%;
+    font-size: 16px;
+    color: #FFFFFF;
+    padding: 4px;
+    width: 103px;
+    text-align: center;
+    -webkit-transition-duration: 0.4s;
+    transition-duration: 0.4s;
+    text-decoration: none;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.button:after {
+  content: "";
+  background:#252440;
+  display: block;
+  position: absolute;
+  padding-top: 300%;
+  padding-left: 350%;
+  margin-left: -20px!important;
+  margin-top: -120%;
+  opacity: 0;
+  transition: all 0.8s
+}
+
+.button:active:after {
+  padding: 0;
+  margin: 0;
+  opacity: 1;
+  transition: 0s
+}
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px #9796A6; 
+  border-radius: 10px;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #727087; 
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #3D3B53; 
 }
 </style>
 </head>
@@ -66,6 +179,8 @@ img.intLink { border: 0; }
 <input type="hidden" name="myDoc">
 
 <div id="toolBar1">
+
+  
 
 <select onchange="formatType('fontsize',this[this.selectedIndex].value);
 this.selectedIndex=0;">
@@ -92,6 +207,7 @@ this.selectedIndex=0;">
 
 <select onchange="formatType('foreColor',this[this.selectedIndex].value);">
   <option value="Font colour" selected="selected">Font Colour</option>
+  <option value="#000000">Black</option>
   <option value="#FFFF00">Yellow</option>
   <option value="#FF0000">Red</option>
   <option value="#0000FF">Blue</option>
@@ -114,12 +230,14 @@ this.selectedIndex=0;">
 
 </div>
 <h4>Subject:</h2>
-<div id="subjectBox" contenteditable="true" spellcheck="true"></div>
+<div id="subjectBox" contenteditable="true" spellcheck="false" onkeyup="onKeyPress()"></div>
 <h4>Body:</h2>
-<div id="textBox" contenteditable="true" spellcheck="true"></div>
+<div id="textBox" contenteditable="true" spellcheck="false" onkeyup="onKeyPress()"></div>
 </form>
-<div id="DoneButton">
-    <button onclick="getData()">Done</button>
+<div class="bottom-buttons">
+    <button id="formatButton" onclick="formatText()"  class="button" disabled>Format</button>
+    <button id="doneButton" onclick="getData()" class="button" disabled>Done</button>
 </div>
+
 </body>
 </html>

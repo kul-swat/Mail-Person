@@ -1,5 +1,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from MailManConf import Ui_Conf_Window
+from MailManPreprocessors import Ui_Init_Window
 from Body import Ui_BodyWindow
 from send_mail import SendMailThread
 from archive_mail import SaveMailThread
@@ -90,7 +91,8 @@ class Ui_MainWindow(object):
         if file_name:
             file_name = self.modify_file_path(file_name)
             self.masterfile = file_name
-        file_name_1, _ = QtWidgets.QFileDialog.getOpenFileName(None,'Open MergeList Excel file',home_dir, "xlsx files (*.xlsx)")
+        #file_name_1, _ = QtWidgets.QFileDialog.getOpenFileName(None,'Open MergeList Excel file',home_dir, "xlsx files (*.xlsx)")
+        file_name_1, _ = QtWidgets.QFileDialog.getOpenFileName(None,'Open MergeList Excel file')
         print("file path from qtwidges in mail_store merge file function:",file_name)
         if file_name:
             file_name = self.modify_file_path(file_name)
@@ -208,6 +210,8 @@ class Ui_MainWindow(object):
         self.menubar.setObjectName("menubar")
         self.menuPreference = QtWidgets.QMenu(self.menubar)
         self.menuPreference.setObjectName("menuPreference")
+        self.menuPreprocess = QtWidgets.QMenu(self.menubar)
+        self.menuPreprocess.setObjectName("menuPreprocess")
         self.menuFont = QtWidgets.QMenu(self.menubar)
         self.menuFont.setObjectName("menuFont")
         self.menuConfiguration = QtWidgets.QMenu(self.menubar)
@@ -231,12 +235,16 @@ class Ui_MainWindow(object):
         self.exit_action.setObjectName("exit_action")
         self.exit_action.triggered.connect(self.close_application)
         self.cb_action = QtWidgets.QAction(MainWindow)
+        self.ci_action = QtWidgets.QAction(MainWindow)
         icon1 = QtGui.QIcon()
         icon1.addPixmap(QtGui.QPixmap("icons/changebackground.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.cb_action.setIcon(icon1)
         self.cb_action.setObjectName("cb_action")
         self.cb_action.triggered.connect(self.versionTwo)
         self.ct_action = QtWidgets.QAction(MainWindow)
+        self.ci_action.setIcon(icon1)
+        self.ci_action.setObjectName("ci_action")
+        self.ci_action.triggered.connect(self.choose_initializers)
         icon2 = QtGui.QIcon()
         icon2.addPixmap(QtGui.QPixmap("icons/changetheme.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.ct_action.setIcon(icon2)
@@ -278,6 +286,7 @@ class Ui_MainWindow(object):
         self.body_action.triggered.connect(self.bodyaction)
         self.menuPreference.addAction(self.cb_action)
         self.menuPreference.addAction(self.ct_action)
+        self.menuPreprocess.addAction(self.ci_action)
         self.menuFont.addAction(self.cff_action)
         self.menuFont.addAction(self.cfs_action)
         self.menuConfiguration.addAction(self.Show_Configuration)
@@ -286,6 +295,7 @@ class Ui_MainWindow(object):
         self.menuexit.addAction(self.exit_action)
         self.menubody.addAction(self.body_action)
         self.menubar.addAction(self.menuPreference.menuAction())
+        self.menubar.addAction(self.menuPreprocess.menuAction()) 
         self.menubar.addAction(self.menuFont.menuAction())
         self.menubar.addAction(self.menuConfiguration.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
@@ -335,6 +345,12 @@ class Ui_MainWindow(object):
         self.cnf_ui.setupUi(self.cnf_window)
         self.cnf_window.show()
 
+    def choose_initializers(self):
+        self.init_window = QtWidgets.QMainWindow()
+        self.init_ui = Ui_Init_Window(self.wi,self.getpass,self.json,self.os,self.opx,self.sys)
+        self.init_ui.setupUi(self.init_window)
+        self.init_window.show()
+
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "The Mail Man"))
@@ -346,12 +362,14 @@ class Ui_MainWindow(object):
         self.menuPreference.setTitle(_translate("MainWindow", "Preference"))
         self.menuFont.setTitle(_translate("MainWindow", "Font"))
         self.menubody.setTitle(_translate("MainWindow", "Setup"))
+        self.menuPreprocess.setTitle(_translate("MainWindow", "Preprocess"))
         self.menuConfiguration.setTitle(_translate("MainWindow", "Configuration"))
         self.menuHelp.setTitle(_translate("MainWindow", "Help"))
         self.menuVersion.setTitle(_translate("MainWindow", "Version"))
         self.menuexit.setTitle(_translate("MainWindow", "Exit"))
         self.cb_action.setText(_translate("MainWindow", "Change Background"))
         self.ct_action.setText(_translate("MainWindow", "Change Theme"))
+        self.ci_action.setText(_translate("MainWindow", "Choose Initializers"))
         self.cff_action.setText(_translate("MainWindow", "Change Font Family"))
         self.cfs_action.setText(_translate("MainWindow", "Change Font Size"))
         self.Show_Help.setText(_translate("MainWindow", "Show Help"))
