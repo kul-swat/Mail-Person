@@ -25,6 +25,7 @@ class Ui_MainWindow(object):
         self.urlparse = urlparse
         self.masterfile = ''
         self.mergelist = ''
+        self.isFileAttached=True
         
     def modify_file_path(self,file_name): #if xlsx file is in shared drive this func converting f/w slash to b/w slash
         print("filename: ",file_name)
@@ -83,6 +84,10 @@ class Ui_MainWindow(object):
         msg.setText(body)
         msg.exec_()
 
+    def mail_send_without_attachment(self):
+        self.isFileAttached=False
+        self.mail_send()
+        
     def mail_send(self): #send file while opening master, merge file
         file_name = ''
         home_dir = str(self.Path.home())
@@ -101,7 +106,7 @@ class Ui_MainWindow(object):
             self.textEdit.clear()
             self.progressBar.setValue(0)
             self.busy = True
-            self.worker = SendMailThread(self.opx,self.sys,self.os,self.wi,self.wc,self.re,self.time,self.json,self.datetime,self.urlparse,self.masterfile,self.mergelist)
+            self.worker = SendMailThread(self.opx,self.sys,self.os,self.wi,self.wc,self.re,self.time,self.json,self.datetime,self.urlparse,self.masterfile,self.mergelist,self.isFileAttached)
             self.worker.start()
             self.worker.update_progress.connect(self.update_log)
             self.worker.update_bar.connect(self.update_prog_bar)
@@ -152,13 +157,18 @@ class Ui_MainWindow(object):
         self.lineEdit_3.setAlignment(QtCore.Qt.AlignCenter)
         self.verticalLayout.addWidget(self.lineEdit_3)
         self.sendmail = QtWidgets.QPushButton(self.centralwidget)
-        self.sendmail.setGeometry(QtCore.QRect(20, 197, 251, 31))
-        self.sendmail.setStyleSheet("background-color: orange; font: bold 10pt")
+        self.sendmail.setGeometry(QtCore.QRect(20, 197, 120, 31))
+        self.sendmail.setStyleSheet("background-color: orange; font: bold 9pt")
         self.sendmail.setObjectName("sendmail")
         self.sendmail.clicked.connect(self.mail_send)
+        self.sendMailWithoutAttachment = QtWidgets.QPushButton(self.centralwidget)
+        self.sendMailWithoutAttachment.setGeometry(QtCore.QRect(145, 197, 260, 31))
+        self.sendMailWithoutAttachment.setStyleSheet("background-color: orange; font: bold 9pt")
+        self.sendMailWithoutAttachment.setObjectName("sendMailWithoutAttachment")
+        self.sendMailWithoutAttachment.clicked.connect(self.mail_send_without_attachment)
         self.savemail = QtWidgets.QPushButton(self.centralwidget)
-        self.savemail.setGeometry(QtCore.QRect(290, 198, 261, 31))
-        self.savemail.setStyleSheet("background-color: orange; font: bold 10pt")
+        self.savemail.setGeometry(QtCore.QRect(410, 197, 140, 31))
+        self.savemail.setStyleSheet("background-color: orange; font: bold 9pt")
         self.savemail.setObjectName("savemail")
         self.savemail.clicked.connect(self.mail_store)
         self.line_2 = QtWidgets.QFrame(self.centralwidget)
@@ -355,6 +365,7 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "The Mail Man"))
         self.sendmail.setText(_translate("MainWindow", "Send Mail"))
+        self.sendMailWithoutAttachment.setText(_translate("MainWindow", "Send Mail Without Attchment"))
         self.savemail.setText(_translate("MainWindow", "Archive Mail"))
         self.comboBox.setToolTip(_translate("MainWindow", "Please select the Mail Account"))
         self.label_3.setText(_translate("MainWindow", "Mail Box Using"))

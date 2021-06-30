@@ -119,13 +119,20 @@ class Ui_Init_Window(object):
             inline = line.runs
             for id,word in enumerate(inline):
                 #print(key,id, word.text)
-                for key in client_details.keys():
-                    if key in word.text:
-                        #print(key,id, word.text)
-                        if client_details[key]==None:
-                            word.text=word.text.replace(f"«{key}»","")
-                        else:
-                            word.text=word.text.replace(f"«{key}»",client_details[key])
+                # for key in client_details.keys():
+                #     if key in word.text:
+                #         #print(key,id, word.text)
+                #         if client_details[key]==None:
+                #             word.text=word.text.replace(f"«{key}»","")
+                #         else:
+                #             word.text=word.text.replace(f"«{key}»",client_details[key])
+                #Above lines are commented, as other files are hardcoded with column names
+                if word.text=="«First":
+                    word.text = client_details['First Name']
+                elif word.text=="Name»":
+                    word.text=""
+                elif word.text=="«Generator":
+                    word.text = client_details['Generator Name']
         return docs
 
     def submit(self):
@@ -155,10 +162,10 @@ class Ui_Init_Window(object):
                 cell_obj=ws.cell(row = row, column = column)
                 client_data[header_obj.value]=cell_obj.value
             modified_doc = self.modify_word(client_data)
-            modified_doc.save(f'.\\temp\\{client_data["First_Name"]}.docx')
-            convert(f'.\\temp\\{client_data["First_Name"]}.docx',f'.\\pdfs\\{client_data["First_Name"]}.pdf')
+            modified_doc.save(f'.\\temp\\{client_data["First Name"]}.docx')
+            convert(f'.\\temp\\{client_data["First Name"]}.docx',f'.\\pdfs\\{client_data["First Name"]}.pdf')
             #saving pdf path in hyperlink
-            ws.cell(row=row, column=12).hyperlink = f'.\\pdfs\\{client_data["First_Name"]}.pdf'
+            ws.cell(row=row, column=12).hyperlink = f'.\\pdfs\\{client_data["First Name"]}.pdf'
             ws.cell(row=row, column=12).value = "pdf file"
             ws.cell(row=row, column=12).style = "Hyperlink"
             wb.save(state['excel_path'])

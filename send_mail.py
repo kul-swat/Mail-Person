@@ -5,7 +5,7 @@ class SendMailThread(QtCore.QThread):
     update_progress = QtCore.pyqtSignal(str)
     update_bar = QtCore.pyqtSignal(int)
 
-    def __init__(self,opx,sys,os,wi,wc,re,time,json,datetime,urlparse,masterfile,mergelist,parent=None):
+    def __init__(self,opx,sys,os,wi,wc,re,time,json,datetime,urlparse,masterfile,mergelist,isFileAttached,parent=None):
         QtCore.QThread.__init__(self, parent)
         self.opx = opx
         self.sys = sys
@@ -20,13 +20,14 @@ class SendMailThread(QtCore.QThread):
         self.masterfile = masterfile
         self.mergelist = mergelist
         self.error = False
+        self.isFileAttached=isFileAttached
 
     def check(self): #everything is fine
 
         if not(self.os.path.isfile('config.prop') and self.os.stat('config.prop').st_size):
             self.error = True
             self.update_progress.emit('Error, config.prop is missing or Blank\n')
-
+            
         if not self.os.access(r'\\uk.corporg.net\ngdfs\Shared\Cohqfs01\EVERYONE\WK24DATA\Generators',self.os.R_OK | self.os.W_OK | self.os.X_OK):
             self.error = True
             self.update_progress.emit('Error, Week24Data\Generator folder access is denied\n')
@@ -128,7 +129,7 @@ class SendMailThread(QtCore.QThread):
                     temp['Post Code']=self.merge_ws['K'+str(rowct)].value
                     temp['common_attachment']=common_attachment
                     temp['Ref No']=self.merge_ws['L'+str(rowct)].value
-                    
+
                     #Merge list in Shared drive, accessing it- automatic
                     if self.mergelist.startswith("//"):
                         #take the merge list path
@@ -216,7 +217,7 @@ class SendMailThread(QtCore.QThread):
         ref_no = str(maildata['Ref No']).strip()
         gen_name = maildata['Generator Name']
         print(ref_no)
-        try:
+        try:           
             '''
             sendbox = self.namespace.GetDefaultFolder(5)
             item_count = sendbox.Items.Count
@@ -314,13 +315,14 @@ class SendMailThread(QtCore.QThread):
                 else:
                     print("Line:315 Local drive")
                     temp_path='\\\\'+maildata['File Path']
-                
+
                 print("File path of attachment",temp_path)
-                mail.Attachments.Add(temp_path)
-                #mail.Attachments.Add(r"\\uk.corporg.net\\ngdfs\\Shared\\Cohqfs01\\EVERYONE\\WK24DATA\\Week 24 Submissions 2020\\Correspondence & Letters 2020\\Generator PDF\\PDF 1 to 50\\1_3R Energy Solutions.pdf")
-                for fld in maildata['common_attachment'].split(','):
-                    mail.Attachments.Add(fld)
-                    print("folder Attachment:",fld) #generic attachment path
+                if self.isFileAttached:
+                    mail.Attachments.Add(temp_path)
+                    #mail.Attachments.Add(r"\\uk.corporg.net\\ngdfs\\Shared\\Cohqfs01\\EVERYONE\\WK24DATA\\Week 24 Submissions 2020\\Correspondence & Letters 2020\\Generator PDF\\PDF 1 to 50\\1_3R Energy Solutions.pdf")
+                    for fld in maildata['common_attachment'].split(','):
+                        mail.Attachments.Add(fld)
+                        print("folder Attachment:",fld) #generic attachment path
             except Exception as ex:
                 self.error = True
                 self.update_progress.emit('Error while parsing mail body and subject and attachments '+maildata['Ref No']+'\n'+str(ex))
@@ -352,12 +354,13 @@ class SendMailThread(QtCore.QThread):
                 if maildata:
                     response=self.sendmail(maildata)
                 self.update_bar.emit(62)
-                if not self.error:
-                    for i in response:
-                        self.write_excel(i)
-                    self.update_bar.emit(100)
-                else:
-                    self.update_bar.emit(100)
+                if self.isFileAttached:
+                    if not self.error:
+                        for i in response:
+                            self.write_excel(i)
+                        self.update_bar.emit(100)
+                    else:
+                        self.update_bar.emit(100)
         else:
             self.update_bar.emit(18)
         self.update_bar.emit(100)
